@@ -9,10 +9,15 @@ import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
 import { Program, Provider, web3 } from '@project-serum/anchor';
 
 // SystemProgram is a reference to the Solana runtime!
-const { SystemProgram, Keypair } = web3;
+const { SystemProgram } = web3;
 
 // Create a keypair for the account that will hold the GIF data.
-let baseAccount = Keypair.generate();
+// let baseAccount = Keypair.generate(); // new account to hold GIFs needed for every refresh 
+import kp from './keypair.json'
+
+const arr = Object.values(kp._keypair.secretKey)
+const secret = new Uint8Array(arr)
+const baseAccount = web3.Keypair.fromSecretKey(secret)
 
 // This is the address of your solana program, if you forgot, just run solana address -k target/deploy/myepicproject-keypair.json
 const programID = new PublicKey("411epjTUoVTbocyurmcHzUCcfem35iJ3F3yWQ3ytJZ7w");
