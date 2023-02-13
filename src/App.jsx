@@ -80,15 +80,29 @@ const App = () => {
   };
 
   const sendGif = async () => {
-    if (inputValue.length > 0) {
-      console.log("Gif link:", inputValue);
-      setGifList([...gifList, inputValue]);
-      setInputValue("");
-    } else {
-      console.log("Empty input. Try again.");
+    if (inputValue.length === 0) {
+      console.log("No gif link given!")
+      return
+    }
+    setInputValue('');
+    console.log('Gif link:', inputValue);
+    try {
+      const provider = getProvider()
+      const program = await getProgram();
+
+      await program.rpc.addGif(inputValue, {
+        accounts: {
+          baseAccount: baseAccount.publicKey,
+          user: provider.wallet.publicKey,
+        },
+      });
+      console.log("GIF successfully sent to program", inputValue)
+
+      await getGifList();
+    } catch (error) {
+      console.log("Error sending GIF:", error)
     }
   };
-
   const onInputChange = (event) => {
     const { value } = event.target;
     setInputValue(value);
@@ -123,6 +137,8 @@ const App = () => {
       console.log("Error creating BaseAccount account:", error)
     }
   }
+
+
 
   /*
    * We want to render this UI when the user hasn't connected
